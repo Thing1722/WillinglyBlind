@@ -9,6 +9,7 @@ placeholders only; it does not use sensors, haptics, or speech.
 - `SafeStep/SafeStepApp.swift` — app entry point that opens the start screen.
 - `SafeStep/StartView.swift` — start screen, walking-mode selection, and start button.
 - `SafeStep/LiveDetectionView.swift` — placeholder destination for a safe walk.
+- `SafeStep/Detection/WalkingMode.swift` — walking modes and `DetectionConfig` thresholds.
 
 ## Test in Xcode
 
@@ -18,3 +19,13 @@ placeholders only; it does not use sensors, haptics, or speech.
 4. Confirm **Standard Mode** starts selected, switch between both modes, then tap
    **START SAFE WALK** and confirm the Live Detection placeholder opens with the
    selected mode.
+
+Detection logic (not yet wired to sensors) should read
+`WalkingMode.detectionConfig` rather than switching on the mode:
+
+- **Standard:** obstacle caution 2.0 m, warning 1.0 m, danger 0.5 m
+- **Sensitive:** 2.5 m / 1.5 m / 0.8 m
+- **Drop-off (both):** ground cell ~0.6 m farther than the expected walking
+  surface, or mostly invalid samples
+- **Debounce (both):** 3 consecutive frames to show a warning; 6 consecutive
+  clear frames to hide it so the alert does not flicker off
