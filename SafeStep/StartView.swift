@@ -1,12 +1,5 @@
 import SwiftUI
 
-enum WalkingMode: String, CaseIterable, Identifiable {
-    case standard = "Standard Mode"
-    case sensitive = "Sensitive Mode"
-
-    var id: Self { self }
-}
-
 struct StartView: View {
     @State private var selectedMode: WalkingMode = .standard
 
