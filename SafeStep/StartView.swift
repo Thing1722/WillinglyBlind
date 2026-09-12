@@ -7,6 +7,10 @@ struct StartView: View {
         LiDARSession.deviceSupportsLiDAR
     }
 
+    private var hasRearCamera: Bool {
+        CameraCapture.hasRearCamera
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -26,11 +30,10 @@ struct StartView: View {
                         .font(.title3)
                         .foregroundStyle(.secondary)
 
-                    Text(lidarAvailable
-                         ? "LiDAR ready on this iPhone"
-                         : "No LiDAR here — you can still run the demo")
+                    Text(statusLine)
                         .font(.footnote)
                         .foregroundStyle(lidarAvailable ? .green : .orange)
+                        .multilineTextAlignment(.center)
                         .padding(.top, 4)
                 }
 
@@ -43,7 +46,9 @@ struct StartView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     labeledRow("1", "Point the rear camera forward")
-                    labeledRow("2", "LiDAR depth is scanned ~8 times a second")
+                    labeledRow("2", lidarAvailable
+                               ? "LiDAR depth is scanned ~8 times a second"
+                               : "No LiDAR here — demo scenes still warn you")
                     labeledRow("3", "Haptics + voice warn before you hit something")
                 }
                 .padding(.top, 28)
@@ -55,7 +60,7 @@ struct StartView: View {
                     NavigationLink {
                         LiveDetectionView(mode: selectedMode, forceDemo: false)
                     } label: {
-                        Text(lidarAvailable ? "START SAFE WALK" : "START DEMO WALK")
+                        Text(primaryButtonTitle)
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
@@ -76,6 +81,22 @@ struct StartView: View {
             }
             .padding(24)
         }
+    }
+
+    private var statusLine: String {
+        if lidarAvailable {
+            return "LiDAR ready on this iPhone"
+        }
+        if hasRearCamera {
+            return "No LiDAR on this device. ARKit is already part of iOS — you do not install it. Start a walk to use the rear camera plus demo alerts."
+        }
+        return "No LiDAR or camera on this Simulator. Use TRY SYNTHETIC SCENES, or the Python pipeline on a laptop."
+    }
+
+    private var primaryButtonTitle: String {
+        if lidarAvailable { return "START SAFE WALK" }
+        if hasRearCamera { return "START CAMERA WALK" }
+        return "START DEMO WALK"
     }
 
     private func labeledRow(_ step: String, _ text: String) -> some View {

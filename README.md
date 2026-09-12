@@ -89,7 +89,8 @@ Built-in scenes and the alert they must produce:
 2. Select the **SafeStep** scheme.
 3. Set your Apple ID team: target **SafeStep** → **Signing & Capabilities** →
    Team. Change `com.example.SafeStep` if Xcode complains the bundle id is taken.
-4. Plug in a LiDAR iPhone (or pick a Simulator to try demo scenes).
+4. Plug in a LiDAR iPhone for live depth, a regular iPhone for rear-camera
+   + demo alerts, or a Simulator for synthetic scenes only.
 5. On the phone, Settings → Privacy & Security → Developer Mode → on
    (first run only).
 6. Press **Run** (`⌘R`). Allow camera access when iOS asks.
@@ -165,7 +166,8 @@ SafeStep/
   StartView.swift           Mode picker + start / demo buttons
   LiveDetectionView.swift   Camera + heatmap + alert card
   ARCameraPreview.swift     ARSCNView + depth heatmap
-  LiDARSession.swift        ARKit capture, 8 Hz process, demo fallback
+  CameraCapture.swift       Rear camera when ARKit LiDAR is missing
+  LiDARSession.swift        ARKit / AVFoundation / demo fallback
   DepthAnalyzer.swift       Zone math (keep in sync with pipeline/detect.py)
   DetectionModels.swift     WalkingMode, Hazard, DepthMap
   SyntheticDepth.swift      Demo scenes (keep in sync with pipeline/simulate.py)
@@ -197,8 +199,18 @@ The Python tests will catch a logic regression before you go back to Xcode.
 
 ## Troubleshooting
 
+**You do not install ARKit.** It is already part of iOS. There is no
+separate “ARKit camera” app or package. What many phones lack is **LiDAR
+hardware** (only 12 Pro / 13 Pro / 14 Pro / 15 Pro / 16 Pro and iPad Pro).
+
+On a regular iPhone the app opens the **normal rear camera** and plays
+demo alerts. On the Simulator there is usually no camera at all — use
+**TRY SYNTHETIC SCENES**, or run the Python pipeline on a laptop.
+
 | Symptom | What to try |
 | --- | --- |
+| No LiDAR / no ARKit camera | Expected on non-Pro iPhones. Tap **START CAMERA WALK**. |
+| Black camera on Simulator | Expected. Tap **TRY SYNTHETIC SCENES**. |
 | App says demo on a Pro iPhone | Confirm the model has LiDAR. World-facing camera must be unobstructed. |
 | No speech | Raise volume. Speech still plays in silent mode; haptics need physical device, not Simulator. |
 | Alerts too late / too jumpy | Use Sensitive Mode, or lower `warnDistance` in both Swift and Python. |

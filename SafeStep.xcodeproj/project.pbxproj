@@ -16,6 +16,10 @@
 		A10000000000000000000007 /* AlertEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* AlertEngine.swift */; };
 		A10000000000000000000008 /* LiDARSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* LiDARSession.swift */; };
 		A10000000000000000000009 /* ARCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* ARCameraPreview.swift */; };
+		A1000000000000000000000B /* CameraCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* CameraCapture.swift */; };
+		A1000000000000000000000C /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* ARKit.framework */; };
+		A1000000000000000000000D /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* SceneKit.framework */; };
+		A1000000000000000000000E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +33,10 @@
 		B10000000000000000000008 /* AlertEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertEngine.swift; sourceTree = "<group>"; };
 		B10000000000000000000009 /* LiDARSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiDARSession.swift; sourceTree = "<group>"; };
 		B1000000000000000000000A /* ARCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraPreview.swift; sourceTree = "<group>"; };
+		B1000000000000000000000B /* CameraCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCapture.swift; sourceTree = "<group>"; };
+		B1000000000000000000000C /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
+		B1000000000000000000000D /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
+		B1000000000000000000000E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1000000000000000000000C /* ARKit.framework in Frameworks */,
+				A1000000000000000000000D /* SceneKit.framework in Frameworks */,
+				A1000000000000000000000E /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				C10000000000000000000002 /* SafeStep */,
+				C10000000000000000000004 /* Frameworks */,
 				C10000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +74,7 @@
 				B10000000000000000000008 /* AlertEngine.swift */,
 				B10000000000000000000009 /* LiDARSession.swift */,
 				B1000000000000000000000A /* ARCameraPreview.swift */,
+				B1000000000000000000000B /* CameraCapture.swift */,
 			);
 			path = SafeStep;
 			sourceTree = "<group>";
@@ -72,6 +85,16 @@
 				B10000000000000000000004 /* SafeStep.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000004 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B1000000000000000000000C /* ARKit.framework */,
+				B1000000000000000000000D /* SceneKit.framework */,
+				B1000000000000000000000E /* AVFoundation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,6 +174,7 @@
 				A10000000000000000000007 /* AlertEngine.swift in Sources */,
 				A10000000000000000000008 /* LiDARSession.swift in Sources */,
 				A10000000000000000000009 /* ARCameraPreview.swift in Sources */,
+				A1000000000000000000000B /* CameraCapture.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

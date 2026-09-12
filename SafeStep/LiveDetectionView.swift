@@ -31,20 +31,27 @@ struct LiveDetectionView: View {
 
     @ViewBuilder
     private var cameraBackground: some View {
-        if session.isDemoMode {
+        ZStack {
+            if session.captureSource == .arkit {
+                ARCameraPreview(session: session.session)
+                    .ignoresSafeArea()
+            } else if session.hasCameraPreview {
+                RearCameraPreview(captureSession: session.cameraCapture.session)
+                    .ignoresSafeArea()
+            }
+
             DepthHeatmapView(preview: session.snapshot.preview)
+                .opacity(heatmapOpacity)
                 .ignoresSafeArea()
-                .overlay(Color.black.opacity(0.18))
-        } else {
-            ARCameraPreview(session: session.session)
-                .ignoresSafeArea()
-                .overlay {
-                    DepthHeatmapView(preview: session.snapshot.preview)
-                        .opacity(0.42)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
-                }
+                .allowsHitTesting(false)
         }
+    }
+
+    private var heatmapOpacity: Double {
+        if session.captureSource == .arkit || session.captureSource == .avFoundation {
+            return 0.42
+        }
+        return session.hasCameraPreview ? 0.50 : 1.0
     }
 
     private var topStatus: some View {
@@ -54,7 +61,7 @@ struct LiveDetectionView: View {
             Circle()
                 .fill(session.isDemoMode ? Color.orange : Color.green)
                 .frame(width: 8, height: 8)
-            Text(session.isDemoMode ? "DEMO" : "LIDAR")
+            Text(session.isDemoMode ? "DEMO" : (session.captureSource == .arkit ? "LIDAR" : "CAMERA"))
                 .fontWeight(.semibold)
         }
         .font(.caption)

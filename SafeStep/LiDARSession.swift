@@ -2,19 +2,28 @@ import ARKit
 import Combine
 import Foundation
 
-/// Owns the ARKit session, converts each LiDAR depth frame into a
-/// `DetectionSnapshot`, and falls back to cycling synthetic scenes when the
-/// device has no scene-depth camera.
+enum CaptureSource {
+    case arkit
+    case avFoundation
+    case demo
+}
+
+/// Owns capture: ARKit LiDAR when the phone has it, otherwise the regular
+/// rear camera (AVFoundation). Missing LiDAR is normal — ARKit is already
+/// part of iOS and is not a separate install.
 final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
     @Published var snapshot: DetectionSnapshot = .idle
     @Published var isDemoMode = false
     @Published var isRunning = false
     @Published var lidarSupported = false
+    @Published var hasCameraPreview = false
+    @Published var captureSource: CaptureSource = .demo
     @Published var statusText = "Starting…"
     @Published var errorMessage: String?
     @Published var demoScene: SyntheticScene = .clearHallway
 
     let session = ARSession()
+    let cameraCapture = CameraCapture()
     let mode: WalkingMode
 
     private let alerts = AlertEngine()
@@ -41,27 +50,32 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         errorMessage = nil
         alerts.prepare()
         isRunning = true
+        cameraCapture.onDepth = { [weak self] map in
+            self?.handleDepth(map)
+        }
 
-        if forceDemo || !lidarSupported {
-            startDemo(reason: forceDemo ? "Demo scenes (manual)" : "No LiDAR on this device — demo scenes")
+        if forceDemo {
+            startCameraThenDemo(reason: "Demo scenes (manual)")
             return
         }
 
-        guard ARWorldTrackingConfiguration.isSupported else {
-            startDemo(reason: "ARKit world tracking unavailable — demo scenes")
+        if lidarSupported, ARWorldTrackingConfiguration.isSupported {
+            let config = ARWorldTrackingConfiguration()
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
+                config.frameSemantics.insert(.smoothedSceneDepth)
+            } else {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            config.environmentTexturing = .none
+            session.run(config, options: [.resetTracking, .removeExistingAnchors])
+            captureSource = .arkit
+            isDemoMode = false
+            hasCameraPreview = true
+            statusText = "LiDAR live · \(mode.rawValue)"
             return
         }
 
-        let config = ARWorldTrackingConfiguration()
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
-            config.frameSemantics.insert(.smoothedSceneDepth)
-        } else {
-            config.frameSemantics.insert(.sceneDepth)
-        }
-        config.environmentTexturing = .none
-        session.run(config, options: [.resetTracking, .removeExistingAnchors])
-        isDemoMode = false
-        statusText = "LiDAR live · \(mode.rawValue)"
+        startRearCamera(preferDepth: true)
     }
 
     func stop() {
@@ -69,8 +83,56 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         demoTimer?.invalidate()
         demoTimer = nil
         session.pause()
+        cameraCapture.stop()
         alerts.reset()
+        hasCameraPreview = false
         statusText = "Stopped"
+    }
+
+    private func startRearCamera(preferDepth: Bool) {
+        session.pause()
+        cameraCapture.start(videoOnly: !preferDepth) { [weak self] result in
+            guard let self, self.isRunning else { return }
+            switch result {
+            case .depthAvailable:
+                self.captureSource = .avFoundation
+                self.isDemoMode = false
+                self.hasCameraPreview = true
+                self.statusText = "Rear camera depth · \(self.mode.rawValue)"
+            case .videoOnly:
+                self.hasCameraPreview = true
+                self.startDemo(reason: "No LiDAR on this device — camera + demo alerts")
+            case .failed(let message):
+                self.hasCameraPreview = false
+                self.errorMessage = message
+                self.startDemo(reason: message)
+            }
+        }
+    }
+
+    private func startCameraThenDemo(reason: String) {
+        startDemo(reason: reason)
+        cameraCapture.start(videoOnly: true) { [weak self] result in
+            guard let self, self.isRunning else { return }
+            if case .failed(let message) = result {
+                self.hasCameraPreview = false
+                self.errorMessage = message
+            } else {
+                self.hasCameraPreview = true
+            }
+        }
+    }
+
+    private func handleDepth(_ map: DepthMap) {
+        guard isRunning, !isDemoMode else { return }
+        processQueue.async { [weak self] in
+            guard let self else { return }
+            let result = DepthAnalyzer.analyze(depth: map, mode: self.mode)
+            DispatchQueue.main.async {
+                self.snapshot = result
+                self.alerts.handle(result)
+            }
+        }
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -97,7 +159,7 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
     func session(_ session: ARSession, didFailWithError error: Error) {
         DispatchQueue.main.async {
             self.errorMessage = error.localizedDescription
-            self.startDemo(reason: "Camera failed — demo scenes")
+            self.startRearCamera(preferDepth: true)
         }
     }
 
@@ -118,6 +180,7 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
     private func startDemo(reason: String) {
         session.pause()
         isDemoMode = true
+        captureSource = .demo
         lidarSupported = Self.deviceSupportsLiDAR && !forceDemo
         statusText = reason
         demoIndex = 0
