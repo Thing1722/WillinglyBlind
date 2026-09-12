@@ -105,9 +105,15 @@ def write_report(path: Path, rows: list[tuple[str, DetectionSnapshot, Path]]) ->
     for scene_name, snapshot, image_path in rows:
         color = KIND_COLORS.get(snapshot.primary.kind, "#64748b")
         extras = "".join(
-            f"<li>{html.escape(h.message)} "
-            f"({h.distance_m:.1f} m, severity {h.severity})</li>"
+            f"<li>{html.escape(h.message)}"
+            + (
+                ""
+                if not np.isfinite(h.distance_m)
+                else f" ({h.distance_m:.1f} m, severity {h.severity})"
+            )
+            + "</li>"
             for h in snapshot.hazards
+            if not (h.kind == HazardKind.CLEAR and h is snapshot.primary)
         )
         zones = snapshot.zones
         cards.append(
