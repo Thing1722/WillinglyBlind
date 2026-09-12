@@ -1,5 +1,6 @@
 import ARKit
 import Combine
+import CoreVideo
 import Foundation
 
 enum CaptureSource: Equatable {
@@ -51,8 +52,9 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         errorMessage = nil
         alerts.prepare()
         isRunning = true
-        processQueue.async { [weak self] in
-            self?.debouncer.reset()
+        // Serialize with in-flight analyze. Mutating the struct needs a non-optional self.
+        processQueue.sync {
+            self.debouncer.reset()
         }
         cameraCapture.onDepth = { [weak self] frame in
             self?.handleCapturedDepth(frame)
@@ -226,7 +228,9 @@ extension DepthFrame {
         if let confidence {
             CVPixelBufferLockBaseAddress(confidence, .readOnly)
             confidenceLock = true
-            confidenceBase = CVPixelBufferGetBaseAddress(confidence)?.assumingMemoryBound(to: UInt8.self)
+            if let confidenceAddress = CVPixelBufferGetBaseAddress(confidence) {
+                confidenceBase = UnsafePointer(confidenceAddress.assumingMemoryBound(to: UInt8.self))
+            }
             confidenceBytesPerRow = CVPixelBufferGetBytesPerRow(confidence)
         }
         defer {
