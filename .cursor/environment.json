@@ -1,0 +1,5 @@
+{
+  "name": "WillinglyBlind / SafeStep — Swift (Linux)",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh"
+}
