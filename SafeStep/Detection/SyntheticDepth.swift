@@ -30,7 +30,7 @@ enum SyntheticDepth {
     static let width = 256
     static let height = 192
 
-    static func make(_ scene: SyntheticScene, seed: Int = 1) -> DepthMap {
+    static func make(_ scene: SyntheticScene, seed: Int = 1) -> DepthFrame {
         var depth = hallway()
         switch scene {
         case .clearHallway:
@@ -49,7 +49,7 @@ enum SyntheticDepth {
             stampBox(&depth, row0: 0.30, row1: 0.80, col0: 0.72, col1: 1.00, meters: 0.70)
         }
         addNoise(&depth, seed: seed)
-        return DepthMap(width: width, height: height, meters: depth)
+        return DepthFrame(width: width, height: height, meters: depth)
     }
 
     /// Floor gets closer toward the bottom of the frame, as a slightly
@@ -67,7 +67,7 @@ enum SyntheticDepth {
         return meters
     }
 
-    private static func stampBox(
+    static func stampBox(
         _ depth: inout [Float],
         row0: Float,
         row1: Float,
@@ -88,6 +88,14 @@ enum SyntheticDepth {
             }
             y += 1
         }
+    }
+
+    /// Hallway with a center-path box at `meters` so tests can probe band edges.
+    static func hallwayWithCenterObstacle(meters: Float, seed: Int = 1) -> DepthFrame {
+        var depth = hallway()
+        stampBox(&depth, row0: 0.32, row1: 0.82, col0: 0.34, col1: 0.66, meters: meters)
+        addNoise(&depth, seed: seed)
+        return DepthFrame(width: width, height: height, meters: depth)
     }
 
     private static func addNoise(_ depth: inout [Float], seed: Int) {

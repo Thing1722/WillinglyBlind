@@ -85,14 +85,3 @@ struct DetectionSnapshot: Equatable {
         )
     }
 }
-
-struct DepthMap {
-    let width: Int
-    let height: Int
-    /// Row-major depth in meters.
-    let meters: [Float]
-
-    func sample(row: Int, column: Int) -> Float {
-        meters[row * width + column]
-    }
-}

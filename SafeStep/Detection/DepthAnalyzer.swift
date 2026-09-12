@@ -14,7 +14,7 @@ enum DepthAnalyzer {
     private static let overheadDistance: Float = 1.3
 
     static func analyze(
-        depth: DepthMap,
+        depth: DepthFrame,
         config: DetectionConfig,
         now: Date = Date()
     ) -> DetectionSnapshot {
@@ -71,19 +71,12 @@ enum DepthAnalyzer {
             )
         }
 
-        let dropOff: Bool
-        if ground.invalidSampleRatio >= config.dropOffInvalidSampleRatio {
-            dropOff = true
-        } else if let measured = ground.median, let expected = mid.median {
-            dropOff = config.isDropOff(
-                measuredGroundMeters: Double(measured),
-                expectedWalkingSurfaceMeters: Double(expected),
-                invalidSampleRatio: ground.invalidSampleRatio
-            )
-        } else {
-            dropOff = false
-        }
-        if dropOff {
+        let expectedWalkingSurface = mid.median.map(Double.init) ?? 0
+        if config.isDropOff(
+            measuredGroundMeters: ground.median.map(Double.init),
+            expectedWalkingSurfaceMeters: expectedWalkingSurface,
+            invalidSampleRatio: ground.invalidSampleRatio
+        ), mid.median != nil || ground.invalidSampleRatio >= config.dropOffInvalidSampleRatio {
             hazards.append(
                 makeHazard(
                     kind: .dropOff,
@@ -137,7 +130,7 @@ enum DepthAnalyzer {
     }
 
     private static func zoneStats(
-        _ depth: DepthMap,
+        _ depth: DepthFrame,
         rowStart: Float,
         rowEnd: Float,
         colStart: Float,
@@ -254,7 +247,7 @@ enum DepthAnalyzer {
         )
     }
 
-    private static func makePreview(_ depth: DepthMap) -> DepthPreview {
+    private static func makePreview(_ depth: DepthFrame) -> DepthPreview {
         let width = 48
         let height = 36
         var meters = [Float](repeating: 0, count: width * height)
