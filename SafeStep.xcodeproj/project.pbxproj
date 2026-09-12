@@ -10,6 +10,8 @@
 		A10000000000000000000001 /* SafeStepApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* SafeStepApp.swift */; };
 		A10000000000000000000002 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* StartView.swift */; };
 		A10000000000000000000003 /* LiveDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* LiveDetectionView.swift */; };
+		A10000000000000000000005 /* DetectionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* DetectionModels.swift */; };
+		A10000000000000000000006 /* DebugPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* DebugPanelView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +19,8 @@
 		B10000000000000000000002 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* LiveDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetectionView.swift; sourceTree = "<group>"; };
 		B10000000000000000000004 /* SafeStep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeStep.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000005 /* DetectionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModels.swift; sourceTree = "<group>"; };
+		B10000000000000000000006 /* DebugPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +47,9 @@
 			children = (
 				B10000000000000000000001 /* SafeStepApp.swift */,
 				B10000000000000000000002 /* StartView.swift */,
+				B10000000000000000000005 /* DetectionModels.swift */,
 				B10000000000000000000003 /* LiveDetectionView.swift */,
+				B10000000000000000000006 /* DebugPanelView.swift */,
 			);
 			path = SafeStep;
 			sourceTree = "<group>";
@@ -126,7 +132,9 @@
 			files = (
 				A10000000000000000000001 /* SafeStepApp.swift in Sources */,
 				A10000000000000000000002 /* StartView.swift in Sources */,
+				A10000000000000000000005 /* DetectionModels.swift in Sources */,
 				A10000000000000000000003 /* LiveDetectionView.swift in Sources */,
+				A10000000000000000000006 /* DebugPanelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
