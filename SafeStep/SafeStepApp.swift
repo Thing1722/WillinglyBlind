@@ -5,6 +5,7 @@ struct SafeStepApp: App {
     var body: some Scene {
         WindowGroup {
             StartView()
+                .preferredColorScheme(.dark)
         }
     }
 }

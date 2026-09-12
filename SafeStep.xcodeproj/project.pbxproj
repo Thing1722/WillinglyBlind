@@ -10,6 +10,12 @@
 		A10000000000000000000001 /* SafeStepApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* SafeStepApp.swift */; };
 		A10000000000000000000002 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* StartView.swift */; };
 		A10000000000000000000003 /* LiveDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* LiveDetectionView.swift */; };
+		A10000000000000000000004 /* DetectionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* DetectionModels.swift */; };
+		A10000000000000000000005 /* DepthAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* DepthAnalyzer.swift */; };
+		A10000000000000000000006 /* SyntheticDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* SyntheticDepth.swift */; };
+		A10000000000000000000007 /* AlertEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* AlertEngine.swift */; };
+		A10000000000000000000008 /* LiDARSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* LiDARSession.swift */; };
+		A10000000000000000000009 /* ARCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* ARCameraPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +23,12 @@
 		B10000000000000000000002 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* LiveDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetectionView.swift; sourceTree = "<group>"; };
 		B10000000000000000000004 /* SafeStep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeStep.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000005 /* DetectionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModels.swift; sourceTree = "<group>"; };
+		B10000000000000000000006 /* DepthAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthAnalyzer.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* SyntheticDepth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntheticDepth.swift; sourceTree = "<group>"; };
+		B10000000000000000000008 /* AlertEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000009 /* LiDARSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiDARSession.swift; sourceTree = "<group>"; };
+		B1000000000000000000000A /* ARCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +56,12 @@
 				B10000000000000000000001 /* SafeStepApp.swift */,
 				B10000000000000000000002 /* StartView.swift */,
 				B10000000000000000000003 /* LiveDetectionView.swift */,
+				B10000000000000000000005 /* DetectionModels.swift */,
+				B10000000000000000000006 /* DepthAnalyzer.swift */,
+				B10000000000000000000007 /* SyntheticDepth.swift */,
+				B10000000000000000000008 /* AlertEngine.swift */,
+				B10000000000000000000009 /* LiDARSession.swift */,
+				B1000000000000000000000A /* ARCameraPreview.swift */,
 			);
 			path = SafeStep;
 			sourceTree = "<group>";
@@ -127,6 +145,12 @@
 				A10000000000000000000001 /* SafeStepApp.swift in Sources */,
 				A10000000000000000000002 /* StartView.swift in Sources */,
 				A10000000000000000000003 /* LiveDetectionView.swift in Sources */,
+				A10000000000000000000004 /* DetectionModels.swift in Sources */,
+				A10000000000000000000005 /* DepthAnalyzer.swift in Sources */,
+				A10000000000000000000006 /* SyntheticDepth.swift in Sources */,
+				A10000000000000000000007 /* AlertEngine.swift in Sources */,
+				A10000000000000000000008 /* LiDARSession.swift in Sources */,
+				A10000000000000000000009 /* ARCameraPreview.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,9 +165,12 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "SafeStep uses the camera and LiDAR scanner to detect obstacles and warn you before you walk into them.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -166,9 +193,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "SafeStep uses the camera and LiDAR scanner to detect obstacles and warn you before you walk into them.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
