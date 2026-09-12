@@ -103,12 +103,12 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         lastProcessTime = frame.timestamp
 
         let depthData = frame.smoothedSceneDepth ?? frame.sceneDepth
-        guard let depthData else { return }
+        guard let depthData = depthData else { return }
         let buffer = depthData.depthMap
         let confidence = depthData.confidenceMap
 
         processQueue.async { [weak self] in
-            guard let self else { return }
+            guard let self = self else { return }
             guard let depth = DepthFrame(pixelBuffer: buffer, confidence: confidence) else { return }
             self.publishAnalyzed(depth, skipDebounce: false)
         }
@@ -138,7 +138,7 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
     private func startRearCamera(preferDepth: Bool) {
         session.pause()
         cameraCapture.start(videoOnly: !preferDepth) { [weak self] result in
-            guard let self, self.isRunning else { return }
+            guard let self = self, self.isRunning else { return }
             switch result {
             case .depthAvailable:
                 self.captureSource = .avFoundation
@@ -170,7 +170,7 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
             result = debouncer.apply(result, config: mode.detectionConfig)
         }
         DispatchQueue.main.async { [weak self] in
-            guard let self, self.isRunning else { return }
+            guard let self = self, self.isRunning else { return }
             self.snapshot = result
             self.alerts.handle(result)
         }
@@ -190,7 +190,7 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         publishDemoScene()
         demoTimer?.invalidate()
         let timer = Timer(timeInterval: 4.0, repeats: true) { [weak self] _ in
-            guard let self, self.isRunning else { return }
+            guard let self = self, self.isRunning else { return }
             self.demoIndex += 1
             self.publishDemoScene()
         }
@@ -213,40 +213,59 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
 
 extension DepthFrame {
     init?(pixelBuffer: CVPixelBuffer, confidence: CVPixelBuffer?) {
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
-
         let width = CVPixelBufferGetWidth(pixelBuffer)
         let height = CVPixelBufferGetHeight(pixelBuffer)
         guard width > 0, height > 0 else { return nil }
-        guard let base = CVPixelBufferGetBaseAddress(pixelBuffer) else { return nil }
-
-        let metersBytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-        var confidenceLock = false
-        var confidenceBase: UnsafePointer<UInt8>?
-        var confidenceBytesPerRow = 0
-        if let confidence {
-            CVPixelBufferLockBaseAddress(confidence, .readOnly)
-            confidenceLock = true
-            if let confidenceAddress = CVPixelBufferGetBaseAddress(confidence) {
-                confidenceBase = UnsafePointer(confidenceAddress.assumingMemoryBound(to: UInt8.self))
-            }
-            confidenceBytesPerRow = CVPixelBufferGetBytesPerRow(confidence)
-        }
-        defer {
-            if confidenceLock, let confidence {
-                CVPixelBufferUnlockBaseAddress(confidence, .readOnly)
-            }
+        guard let meters = Self.copyFloat32Rows(from: pixelBuffer, width: width, height: height) else {
+            return nil
         }
 
-        let meters = DepthBufferCopy.copyMeters(
+        var confidenceBytes: [UInt8]? = nil
+        if let confidenceBuffer = confidence {
+            confidenceBytes = Self.copyUInt8Rows(from: confidenceBuffer, width: width, height: height)
+        }
+
+        self.init(
             width: width,
             height: height,
-            meters: base.assumingMemoryBound(to: Float.self),
-            metersBytesPerRow: metersBytesPerRow,
-            confidence: confidenceBase,
-            confidenceBytesPerRow: confidenceBytesPerRow
+            meters: DepthBufferCopy.copyMeters(
+                width: width,
+                height: height,
+                meters: meters,
+                confidence: confidenceBytes
+            )
         )
-        self.init(width: width, height: height, meters: meters)
+    }
+
+    /// Copies a Float32 depth map, respecting `bytesPerRow` padding.
+    private static func copyFloat32Rows(from pixelBuffer: CVPixelBuffer, width: Int, height: Int) -> [Float]? {
+        CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly) }
+        guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else { return nil }
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        var values = [Float](repeating: 0, count: width * height)
+        for row in 0..<height {
+            let rowPointer = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: Float.self)
+            for column in 0..<width {
+                values[row * width + column] = rowPointer[column]
+            }
+        }
+        return values
+    }
+
+    /// Copies an 8-bit confidence map, respecting `bytesPerRow` padding.
+    private static func copyUInt8Rows(from pixelBuffer: CVPixelBuffer, width: Int, height: Int) -> [UInt8]? {
+        CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly) }
+        guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else { return nil }
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        var values = [UInt8](repeating: 0, count: width * height)
+        for row in 0..<height {
+            let rowPointer = baseAddress.advanced(by: row * bytesPerRow).assumingMemoryBound(to: UInt8.self)
+            for column in 0..<width {
+                values[row * width + column] = rowPointer[column]
+            }
+        }
+        return values
     }
 }
