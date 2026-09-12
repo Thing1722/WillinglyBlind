@@ -95,7 +95,7 @@ struct DetectionConfig: Equatable {
         if invalidSampleRatio >= dropOffInvalidSampleRatio {
             return true
         }
-        guard let measuredGroundMeters else {
+        guard let measuredGroundMeters = measuredGroundMeters else {
             return true
         }
         return measuredGroundMeters >= expectedWalkingSurfaceMeters + dropOffDepthMeters

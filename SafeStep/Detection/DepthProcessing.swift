@@ -87,7 +87,7 @@ enum DepthBufferCopy {
             }
             for x in 0..<width {
                 var value = row[x]
-                if let confidenceRow, confidenceRow[x] == 0 {
+                if let confidenceRow = confidenceRow, confidenceRow[x] == 0 {
                     value = 0
                 }
                 out[y * width + x] = value
@@ -103,7 +103,7 @@ enum DepthBufferCopy {
         confidence: [UInt8]? = nil
     ) -> [Float] {
         precondition(meters.count == width * height, "meters count must equal width * height")
-        if let confidence {
+        if let confidence = confidence {
             precondition(confidence.count == width * height, "confidence count must equal width * height")
         }
         return meters.withUnsafeBufferPointer { meterPointer in
@@ -111,7 +111,7 @@ enum DepthBufferCopy {
                 return [Float](repeating: 0, count: width * height)
             }
             let meterBytes = width * MemoryLayout<Float>.stride
-            if let confidence {
+            if let confidence = confidence {
                 return confidence.withUnsafeBufferPointer { confidencePointer in
                     copyMeters(
                         width: width,
