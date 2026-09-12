@@ -31,107 +31,9 @@ struct DepthFrame: Equatable {
         meters[y * width + x]
     }
 
-    /// Depth at image row `row`, column `column` (row-major).
-    func sample(row: Int, column: Int) -> Float {
-        meters[row * width + column]
-    }
-
     /// A sample is valid when it is a finite, strictly positive distance in meters.
     static func isValid(_ meters: Float) -> Bool {
         meters.isFinite && meters > 0
-    }
-
-    /// Copies a row-major Float32 buffer, treating confidence `0` (ARConfidenceLevel.low)
-    /// as invalid. Used by tests without a `CVPixelBuffer`.
-    static func copying(
-        width: Int,
-        height: Int,
-        meters: [Float],
-        confidence: [UInt8]? = nil
-    ) -> DepthFrame {
-        DepthFrame(
-            width: width,
-            height: height,
-            meters: DepthBufferCopy.copyMeters(
-                width: width,
-                height: height,
-                meters: meters,
-                confidence: confidence
-            )
-        )
-    }
-}
-
-/// Copies Float32 meters (and optional UInt8 confidence) into a dense row-major array.
-/// Confidence `0` is `ARConfidenceLevel.low` and is written as invalid (`0`).
-enum DepthBufferCopy {
-    static func copyMeters(
-        width: Int,
-        height: Int,
-        meters: UnsafePointer<Float>,
-        metersBytesPerRow: Int,
-        confidence: UnsafePointer<UInt8>?,
-        confidenceBytesPerRow: Int
-    ) -> [Float] {
-        var out = [Float](repeating: 0, count: width * height)
-        guard width > 0, height > 0 else { return out }
-
-        for y in 0..<height {
-            let row = UnsafeRawPointer(meters)
-                .advanced(by: y * metersBytesPerRow)
-                .assumingMemoryBound(to: Float.self)
-            let confidenceRow: UnsafePointer<UInt8>? = confidence.map { base in
-                UnsafeRawPointer(base)
-                    .advanced(by: y * confidenceBytesPerRow)
-                    .assumingMemoryBound(to: UInt8.self)
-            }
-            for x in 0..<width {
-                var value = row[x]
-                if let confidenceRow, confidenceRow[x] == 0 {
-                    value = 0
-                }
-                out[y * width + x] = value
-            }
-        }
-        return out
-    }
-
-    static func copyMeters(
-        width: Int,
-        height: Int,
-        meters: [Float],
-        confidence: [UInt8]? = nil
-    ) -> [Float] {
-        precondition(meters.count == width * height, "meters count must equal width * height")
-        if let confidence {
-            precondition(confidence.count == width * height, "confidence count must equal width * height")
-        }
-        return meters.withUnsafeBufferPointer { meterPointer in
-            guard let meterBase = meterPointer.baseAddress else {
-                return [Float](repeating: 0, count: width * height)
-            }
-            let meterBytes = width * MemoryLayout<Float>.stride
-            if let confidence {
-                return confidence.withUnsafeBufferPointer { confidencePointer in
-                    copyMeters(
-                        width: width,
-                        height: height,
-                        meters: meterBase,
-                        metersBytesPerRow: meterBytes,
-                        confidence: confidencePointer.baseAddress,
-                        confidenceBytesPerRow: width * MemoryLayout<UInt8>.stride
-                    )
-                }
-            }
-            return copyMeters(
-                width: width,
-                height: height,
-                meters: meterBase,
-                metersBytesPerRow: meterBytes,
-                confidence: nil,
-                confidenceBytesPerRow: 0
-            )
-        }
     }
 }
 
@@ -156,13 +58,8 @@ enum DepthGridRow: Int, CaseIterable, Equatable {
 struct DepthGridCell: Equatable {
     /// Closest valid depth in the cell, in meters. `nil` when every sample is invalid.
     let minMeters: Float?
-    /// Median valid depth in the cell, in meters. `nil` when every sample is invalid.
-    let medianMeters: Float?
     /// Fraction of samples in the cell that were valid, in `0...1`.
     let validFraction: Float
-
-    /// Invalid-sample ratio used by drop-off (`1 - validFraction`).
-    var invalidSampleRatio: Double { Double(1 - validFraction) }
 }
 
 /// Rectangular grid of depth cells. The default layout is 3×3:
@@ -242,11 +139,10 @@ enum DepthGridSampler {
     ) -> DepthGridCell {
         let total = (x1 - x0) * (y1 - y0)
         guard total > 0 else {
-            return DepthGridCell(minMeters: nil, medianMeters: nil, validFraction: 0)
+            return DepthGridCell(minMeters: nil, validFraction: 0)
         }
 
-        var valid: [Float] = []
-        valid.reserveCapacity(total)
+        var validCount = 0
         var minMeters: Float = .infinity
 
         for y in y0..<y1 {
@@ -254,21 +150,13 @@ enum DepthGridSampler {
             for x in x0..<x1 {
                 let value = frame.meters[rowStart + x]
                 guard DepthFrame.isValid(value) else { continue }
-                valid.append(value)
+                validCount += 1
                 minMeters = simd_min(minMeters, value)
             }
         }
 
-        let validCount = valid.count
-        var medianMeters: Float?
-        if validCount > 0 {
-            valid.sort()
-            medianMeters = valid[validCount / 2]
-        }
-
         return DepthGridCell(
             minMeters: validCount > 0 ? minMeters : nil,
-            medianMeters: medianMeters,
             validFraction: Float(validCount) / Float(total)
         )
     }
