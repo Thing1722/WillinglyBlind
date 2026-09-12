@@ -14,6 +14,8 @@ placeholders only; it does not use sensors, haptics, or speech.
 - `SafeStep/LiveDetectionView.swift` — live detection screen with camera preview
   placeholder, status readings, Start/Stop Detection, and Debug Panel link.
 - `SafeStep/DebugPanelView.swift` — simple debug panel showing placeholder readings.
+- `SafeStep/LiveDetectionView.swift` — placeholder destination for a safe walk.
+- `SafeStep/Detection/WalkingMode.swift` — walking modes and `DetectionConfig` thresholds.
 
 ## Test in Xcode
 
@@ -24,6 +26,8 @@ placeholders only; it does not use sensors, haptics, or speech.
    **START SAFE WALK**.
 5. On Live Detection, confirm the camera preview area, **PATH CLEAR**,
    **Stationary**, **3.7 m**, **LOW**, Start/Stop Detection, and Debug Panel.
+   **START SAFE WALK** and confirm the Live Detection placeholder opens with the
+   selected mode.
 
 Detection logic (not yet wired to sensors) should read
 `WalkingMode.detectionConfig` rather than switching on the mode:

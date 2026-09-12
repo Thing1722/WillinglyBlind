@@ -13,6 +13,7 @@
 		A10000000000000000000004 /* WalkingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* WalkingMode.swift */; };
 		A10000000000000000000005 /* DetectionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* DetectionModels.swift */; };
 		A10000000000000000000006 /* DebugPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* DebugPanelView.swift */; };
+		A10000000000000000000004 /* WalkingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* WalkingMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		B10000000000000000000005 /* DetectionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModels.swift; sourceTree = "<group>"; };
 		B10000000000000000000006 /* DebugPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelView.swift; sourceTree = "<group>"; };
 		B10000000000000000000007 /* WalkingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkingMode.swift; sourceTree = "<group>"; };
+		B10000000000000000000005 /* WalkingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkingMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000007 /* WalkingMode.swift */,
+				B10000000000000000000005 /* WalkingMode.swift */,
 			);
 			path = Detection;
 			sourceTree = "<group>";
