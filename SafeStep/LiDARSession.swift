@@ -2,19 +2,28 @@ import ARKit
 import Combine
 import Foundation
 
+enum CaptureSource: Equatable {
+    case arkit
+    case avFoundation
+    case demo
+}
+
 /// Owns the ARKit session, converts each LiDAR depth frame into a
-/// `DetectionSnapshot`, and falls back to cycling synthetic scenes when the
-/// device has no scene-depth camera.
+/// `DetectionSnapshot`, and falls back to AVFoundation then synthetic scenes
+/// when the device has no scene-depth camera.
 final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
     @Published var snapshot: DetectionSnapshot = .idle
     @Published var isDemoMode = false
     @Published var isRunning = false
     @Published var lidarSupported = false
+    @Published var hasCameraPreview = false
+    @Published var captureSource: CaptureSource = .demo
     @Published var statusText = "Starting…"
     @Published var errorMessage: String?
     @Published var demoScene: SyntheticScene = .clearHallway
 
     let session = ARSession()
+    let cameraCapture = CameraCapture()
     let mode: WalkingMode
 
     private let alerts = AlertEngine()
@@ -45,27 +54,34 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         processQueue.async { [weak self] in
             self?.debouncer.reset()
         }
+        cameraCapture.onDepth = { [weak self] frame in
+            self?.handleCapturedDepth(frame)
+        }
 
-        if forceDemo || !lidarSupported {
-            startDemo(reason: forceDemo ? "Demo scenes" : "No LiDAR on this device — demo scenes")
+        if forceDemo {
+            cameraCapture.stop()
+            startDemo(reason: "Demo scenes")
             return
         }
 
-        guard ARWorldTrackingConfiguration.isSupported else {
-            startDemo(reason: "ARKit world tracking unavailable — demo scenes")
+        if lidarSupported, ARWorldTrackingConfiguration.isSupported {
+            cameraCapture.stop()
+            let config = ARWorldTrackingConfiguration()
+            if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
+                config.frameSemantics.insert(.smoothedSceneDepth)
+            } else {
+                config.frameSemantics.insert(.sceneDepth)
+            }
+            config.environmentTexturing = .none
+            session.run(config, options: [.resetTracking, .removeExistingAnchors])
+            captureSource = .arkit
+            isDemoMode = false
+            hasCameraPreview = true
+            statusText = "LiDAR live · \(mode.rawValue)"
             return
         }
 
-        let config = ARWorldTrackingConfiguration()
-        if ARWorldTrackingConfiguration.supportsFrameSemantics(.smoothedSceneDepth) {
-            config.frameSemantics.insert(.smoothedSceneDepth)
-        } else {
-            config.frameSemantics.insert(.sceneDepth)
-        }
-        config.environmentTexturing = .none
-        session.run(config, options: [.resetTracking, .removeExistingAnchors])
-        isDemoMode = false
-        statusText = "LiDAR live · \(mode.rawValue)"
+        startRearCamera(preferDepth: true)
     }
 
     func stop() {
@@ -73,12 +89,14 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         demoTimer?.invalidate()
         demoTimer = nil
         session.pause()
+        cameraCapture.stop()
         alerts.reset()
+        hasCameraPreview = false
         statusText = "Stopped"
     }
 
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        guard isRunning, !isDemoMode else { return }
+        guard isRunning, captureSource == .arkit else { return }
         guard frame.timestamp - lastProcessTime >= 0.12 else { return }
         lastProcessTime = frame.timestamp
 
@@ -89,20 +107,15 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
 
         processQueue.async { [weak self] in
             guard let self else { return }
-            guard let map = DepthMap(pixelBuffer: buffer, confidence: confidence) else { return }
-            var result = DepthAnalyzer.analyze(depth: map, config: self.mode.detectionConfig)
-            result = self.debouncer.apply(result, config: self.mode.detectionConfig)
-            DispatchQueue.main.async {
-                self.snapshot = result
-                self.alerts.handle(result)
-            }
+            guard let depth = DepthFrame(pixelBuffer: buffer, confidence: confidence) else { return }
+            self.publishAnalyzed(depth, skipDebounce: false)
         }
     }
 
     func session(_ session: ARSession, didFailWithError error: Error) {
         DispatchQueue.main.async {
             self.errorMessage = error.localizedDescription
-            self.startDemo(reason: "Camera failed — demo scenes")
+            self.startRearCamera(preferDepth: true)
         }
     }
 
@@ -114,14 +127,60 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
 
     func sessionInterruptionEnded(_ session: ARSession) {
         DispatchQueue.main.async {
-            if !self.isDemoMode {
+            if self.captureSource == .arkit {
                 self.start()
             }
         }
     }
 
-    private func startDemo(reason: String) {
+    private func startRearCamera(preferDepth: Bool) {
         session.pause()
+        cameraCapture.start(videoOnly: !preferDepth) { [weak self] result in
+            guard let self, self.isRunning else { return }
+            switch result {
+            case .depthAvailable:
+                self.captureSource = .avFoundation
+                self.isDemoMode = false
+                self.hasCameraPreview = true
+                self.statusText = "Rear camera depth · \(self.mode.rawValue)"
+            case .videoOnly:
+                self.captureSource = .avFoundation
+                self.hasCameraPreview = true
+                self.startDemo(reason: "No LiDAR on this device — camera + demo alerts", keepCamera: true)
+            case .failed(let message):
+                self.hasCameraPreview = false
+                self.errorMessage = message
+                self.startDemo(reason: message)
+            }
+        }
+    }
+
+    private func handleCapturedDepth(_ frame: DepthFrame) {
+        guard isRunning, captureSource == .avFoundation, !isDemoMode else { return }
+        processQueue.async { [weak self] in
+            self?.publishAnalyzed(frame, skipDebounce: false)
+        }
+    }
+
+    private func publishAnalyzed(_ depth: DepthFrame, skipDebounce: Bool) {
+        var result = DepthAnalyzer.analyze(depth: depth, config: mode.detectionConfig)
+        if !skipDebounce {
+            result = debouncer.apply(result, config: mode.detectionConfig)
+        }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.isRunning else { return }
+            self.snapshot = result
+            self.alerts.handle(result)
+        }
+    }
+
+    private func startDemo(reason: String, keepCamera: Bool = false) {
+        session.pause()
+        if !keepCamera {
+            cameraCapture.stop()
+            captureSource = .demo
+            hasCameraPreview = false
+        }
         isDemoMode = true
         lidarSupported = Self.deviceSupportsLiDAR && !forceDemo
         statusText = reason
@@ -141,75 +200,16 @@ final class LiDARSession: NSObject, ObservableObject, ARSessionDelegate {
         let scenes = SyntheticScene.allCases
         let scene = scenes[demoIndex % scenes.count]
         demoScene = scene
-        let map = SyntheticDepth.make(scene, seed: demoIndex + 1)
+        let frame = SyntheticDepth.make(scene, seed: demoIndex + 1)
         // Demo publishes one frame per scene, so skip debounce.
-        let result = DepthAnalyzer.analyze(depth: map, config: mode.detectionConfig)
+        let result = DepthAnalyzer.analyze(depth: frame, config: mode.detectionConfig)
         snapshot = result
         alerts.handle(result)
         statusText = "Demo · \(scene.title)"
     }
 }
 
-/// Holds a warning until it is seen for `warningAppearFrameCount` frames,
-/// and keeps it until `warningClearFrameCount` consecutive clear frames.
-struct AlertDebouncer {
-    private var displayed: Hazard = .clear
-    private var candidate: Hazard = .clear
-    private var candidateStreak = 0
-    private var clearStreak = 0
-
-    mutating func reset() {
-        displayed = .clear
-        candidate = .clear
-        candidateStreak = 0
-        clearStreak = 0
-    }
-
-    mutating func apply(_ snapshot: DetectionSnapshot, config: DetectionConfig) -> DetectionSnapshot {
-        snapshot.replacingPrimary(process(snapshot.primary, config: config))
-    }
-
-    private mutating func process(_ incoming: Hazard, config: DetectionConfig) -> Hazard {
-        if incoming.kind == .noSignal {
-            displayed = incoming
-            candidate = incoming
-            candidateStreak = 0
-            clearStreak = 0
-            return displayed
-        }
-
-        if incoming.kind == .clear {
-            clearStreak += 1
-            candidateStreak = 0
-            candidate = .clear
-            if clearStreak >= config.warningClearFrameCount {
-                displayed = .clear
-            }
-            return displayed
-        }
-
-        clearStreak = 0
-        if incoming.kind == candidate.kind {
-            candidateStreak += 1
-            candidate = incoming
-        } else {
-            candidate = incoming
-            candidateStreak = 1
-        }
-
-        if incoming.kind == displayed.kind {
-            displayed = incoming
-            return displayed
-        }
-
-        if candidateStreak >= config.warningAppearFrameCount {
-            displayed = incoming
-        }
-        return displayed
-    }
-}
-
-extension DepthMap {
+extension DepthFrame {
     init?(pixelBuffer: CVPixelBuffer, confidence: CVPixelBuffer?) {
         CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
         defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
@@ -219,16 +219,14 @@ extension DepthMap {
         guard width > 0, height > 0 else { return nil }
         guard let base = CVPixelBufferGetBaseAddress(pixelBuffer) else { return nil }
 
-        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-        var meters = [Float](repeating: 0, count: width * height)
-
+        let metersBytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
         var confidenceLock = false
-        var confidenceBase: UnsafeMutableRawPointer?
+        var confidenceBase: UnsafePointer<UInt8>?
         var confidenceBytesPerRow = 0
         if let confidence {
             CVPixelBufferLockBaseAddress(confidence, .readOnly)
             confidenceLock = true
-            confidenceBase = CVPixelBufferGetBaseAddress(confidence)
+            confidenceBase = CVPixelBufferGetBaseAddress(confidence)?.assumingMemoryBound(to: UInt8.self)
             confidenceBytesPerRow = CVPixelBufferGetBytesPerRow(confidence)
         }
         defer {
@@ -237,21 +235,14 @@ extension DepthMap {
             }
         }
 
-        for y in 0..<height {
-            let row = base.advanced(by: y * bytesPerRow).assumingMemoryBound(to: Float.self)
-            let confidenceRow = confidenceBase?.advanced(by: y * confidenceBytesPerRow).assumingMemoryBound(to: UInt8.self)
-            for x in 0..<width {
-                var value = row[x]
-                // ARConfidenceLevel.low == 0; drop noisy LiDAR hits.
-                if let confidenceRow, confidenceRow[x] == 0 {
-                    value = 0
-                }
-                meters[y * width + x] = value
-            }
-        }
-
-        self.width = width
-        self.height = height
-        self.meters = meters
+        let meters = DepthBufferCopy.copyMeters(
+            width: width,
+            height: height,
+            meters: base.assumingMemoryBound(to: Float.self),
+            metersBytesPerRow: metersBytesPerRow,
+            confidence: confidenceBase,
+            confidenceBytesPerRow: confidenceBytesPerRow
+        )
+        self.init(width: width, height: height, meters: meters)
     }
 }

@@ -64,18 +64,31 @@ struct LiveDetectionView: View {
 
     @ViewBuilder
     private var cameraBackground: some View {
-        if session.isDemoMode {
+        ZStack {
+            switch session.captureSource {
+            case .arkit:
+                ARCameraPreview(session: session.session)
+                    .ignoresSafeArea()
+            case .avFoundation:
+                RearCameraPreview(captureSession: session.cameraCapture.session)
+                    .ignoresSafeArea()
+            case .demo:
+                EmptyView()
+            }
+
             DepthHeatmapView(preview: session.snapshot.preview)
+                .opacity(heatmapOpacity)
                 .ignoresSafeArea()
-        } else {
-            ARCameraPreview(session: session.session)
-                .ignoresSafeArea()
-                .overlay {
-                    DepthHeatmapView(preview: session.snapshot.preview)
-                        .opacity(0.42)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
-                }
+                .allowsHitTesting(false)
+        }
+    }
+
+    private var heatmapOpacity: Double {
+        switch session.captureSource {
+        case .arkit, .avFoundation:
+            return 0.42
+        case .demo:
+            return 1.0
         }
     }
 
