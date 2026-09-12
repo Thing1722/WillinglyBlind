@@ -161,6 +161,31 @@ final class DepthProcessingTests: XCTestCase {
         XCTAssertTrue(DepthFrame.isValid(frame.meters[0]))
     }
 
+    func testCopyMetersRespectsBytesPerRowPadding() {
+        let width = 2
+        let height = 2
+        // Two depth samples plus two padding floats on each row.
+        let floatsPerRow = 4
+        let storage: [Float] = [
+            1.0, 2.0, 99, 99,
+            3.0, 4.0, 99, 99
+        ]
+        let copied = storage.withUnsafeBufferPointer { pointer in
+            DepthBufferCopy.copyMeters(
+                width: width,
+                height: height,
+                meters: pointer.baseAddress!,
+                metersBytesPerRow: floatsPerRow * MemoryLayout<Float>.stride,
+                confidence: nil,
+                confidenceBytesPerRow: 0
+            )
+        }
+        XCTAssertEqual(copied[0], 1.0, accuracy: 0.0001)
+        XCTAssertEqual(copied[1], 2.0, accuracy: 0.0001)
+        XCTAssertEqual(copied[2], 3.0, accuracy: 0.0001)
+        XCTAssertEqual(copied[3], 4.0, accuracy: 0.0001)
+    }
+
     func testCopyWithoutConfidenceKeepsFinitePositiveSamples() {
         let meters: [Float] = [0.4, 1.1, Float.nan, 2.0]
         let copied = DepthBufferCopy.copyMeters(width: 2, height: 2, meters: meters)
