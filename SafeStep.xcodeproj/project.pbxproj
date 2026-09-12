@@ -10,22 +10,12 @@
 		A10000000000000000000001 /* SafeStepApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* SafeStepApp.swift */; };
 		A10000000000000000000002 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* StartView.swift */; };
 		A10000000000000000000003 /* LiveDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* LiveDetectionView.swift */; };
-		A10000000000000000000004 /* WalkingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* WalkingMode.swift */; };
-		A10000000000000000000005 /* ARCameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* ARCameraPreview.swift */; };
-		A10000000000000000000006 /* AlertEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* AlertEngine.swift */; };
-		A10000000000000000000007 /* LiDARSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* LiDARSession.swift */; };
-		A10000000000000000000008 /* DetectionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* DetectionModels.swift */; };
-		A10000000000000000000009 /* DepthAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* DepthAnalyzer.swift */; };
-		A1000000000000000000000A /* SyntheticDepth.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* SyntheticDepth.swift */; };
-		A1000000000000000000000B /* DepthProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* DepthProcessing.swift */; };
-		A1000000000000000000000C /* CameraCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* CameraCapture.swift */; };
-		A1000000000000000000000D /* AlertDebouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* AlertDebouncer.swift */; };
-		A1000000000000000000000E /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* ARKit.framework */; };
-		A1000000000000000000000F /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000000000000000000010 /* SceneKit.framework */; };
-		A10000000000000000000010 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* AVFoundation.framework */; };
+		A10000000000000000000004 /* DepthProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* DepthProcessing.swift */; };
+		A10000000000000000000006 /* Models/RiskAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* Models/RiskAssessment.swift */; };
+		A10000000000000000000007 /* Services/WalkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* Services/WalkSession.swift */; };
+		A10000000000000000000008 /* Services/AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* Services/AlertService.swift */; };
+		A10000000000000000000009 /* DebugPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* DebugPanel.swift */; };
 		A20000000000000000000001 /* DepthProcessingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* DepthProcessingTests.swift */; };
-		A20000000000000000000002 /* DepthAnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* DepthAnalyzerTests.swift */; };
-		A20000000000000000000003 /* AlertDebouncerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000004 /* AlertDebouncerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,23 +33,13 @@
 		B10000000000000000000002 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		B10000000000000000000003 /* LiveDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetectionView.swift; sourceTree = "<group>"; };
 		B10000000000000000000004 /* SafeStep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeStep.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B10000000000000000000005 /* WalkingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkingMode.swift; sourceTree = "<group>"; };
-		B10000000000000000000006 /* ARCameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraPreview.swift; sourceTree = "<group>"; };
-		B10000000000000000000007 /* AlertEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertEngine.swift; sourceTree = "<group>"; };
-		B10000000000000000000008 /* LiDARSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiDARSession.swift; sourceTree = "<group>"; };
-		B10000000000000000000009 /* DetectionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModels.swift; sourceTree = "<group>"; };
-		B1000000000000000000000A /* DepthAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthAnalyzer.swift; sourceTree = "<group>"; };
-		B1000000000000000000000B /* SyntheticDepth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntheticDepth.swift; sourceTree = "<group>"; };
-		B1000000000000000000000C /* DepthProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthProcessing.swift; sourceTree = "<group>"; };
-		B1000000000000000000000D /* CameraCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCapture.swift; sourceTree = "<group>"; };
-		B1000000000000000000000E /* AlertDebouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDebouncer.swift; sourceTree = "<group>"; };
-		B1000000000000000000000F /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
-		B10000000000000000000010 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
-		B10000000000000000000011 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B10000000000000000000005 /* DepthProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthProcessing.swift; sourceTree = "<group>"; };
+		B10000000000000000000006 /* Models/RiskAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/RiskAssessment.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* Services/WalkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/WalkSession.swift; sourceTree = "<group>"; };
+		B10000000000000000000008 /* Services/AlertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/AlertService.swift; sourceTree = "<group>"; };
+		B10000000000000000000009 /* DebugPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanel.swift; sourceTree = "<group>"; };
 		B20000000000000000000001 /* SafeStepTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SafeStepTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B20000000000000000000002 /* DepthProcessingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthProcessingTests.swift; sourceTree = "<group>"; };
-		B20000000000000000000003 /* DepthAnalyzerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthAnalyzerTests.swift; sourceTree = "<group>"; };
-		B20000000000000000000004 /* AlertDebouncerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertDebouncerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,9 +47,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000000000000000000000E /* ARKit.framework in Frameworks */,
-				A1000000000000000000000F /* SceneKit.framework in Frameworks */,
-				A10000000000000000000010 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +65,6 @@
 			children = (
 				C10000000000000000000002 /* SafeStep */,
 				C20000000000000000000001 /* SafeStepTests */,
-				C10000000000000000000005 /* Frameworks */,
 				C10000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -100,10 +76,10 @@
 				B10000000000000000000001 /* SafeStepApp.swift */,
 				B10000000000000000000002 /* StartView.swift */,
 				B10000000000000000000003 /* LiveDetectionView.swift */,
-				B10000000000000000000006 /* ARCameraPreview.swift */,
-				B10000000000000000000007 /* AlertEngine.swift */,
-				B10000000000000000000008 /* LiDARSession.swift */,
-				B1000000000000000000000D /* CameraCapture.swift */,
+				B10000000000000000000006 /* Models/RiskAssessment.swift */,
+				B10000000000000000000007 /* Services/WalkSession.swift */,
+				B10000000000000000000008 /* Services/AlertService.swift */,
+				B10000000000000000000009 /* DebugPanel.swift */,
 			);
 			path = SafeStep;
 			sourceTree = "<group>";
@@ -120,32 +96,15 @@
 		C10000000000000000000004 /* Detection */ = {
 			isa = PBXGroup;
 			children = (
-				B10000000000000000000005 /* WalkingMode.swift */,
-				B1000000000000000000000C /* DepthProcessing.swift */,
-				B10000000000000000000009 /* DetectionModels.swift */,
-				B1000000000000000000000A /* DepthAnalyzer.swift */,
-				B1000000000000000000000B /* SyntheticDepth.swift */,
-				B1000000000000000000000E /* AlertDebouncer.swift */,
+				B10000000000000000000005 /* DepthProcessing.swift */,
 			);
 			path = Detection;
-			sourceTree = "<group>";
-		};
-		C10000000000000000000005 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B1000000000000000000000F /* ARKit.framework */,
-				B10000000000000000000010 /* SceneKit.framework */,
-				B10000000000000000000011 /* AVFoundation.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		C20000000000000000000001 /* SafeStepTests */ = {
 			isa = PBXGroup;
 			children = (
 				B20000000000000000000002 /* DepthProcessingTests.swift */,
-				B20000000000000000000003 /* DepthAnalyzerTests.swift */,
-				B20000000000000000000004 /* AlertDebouncerTests.swift */,
 			);
 			path = SafeStepTests;
 			sourceTree = "<group>";
@@ -251,16 +210,11 @@
 				A10000000000000000000001 /* SafeStepApp.swift in Sources */,
 				A10000000000000000000002 /* StartView.swift in Sources */,
 				A10000000000000000000003 /* LiveDetectionView.swift in Sources */,
-				A10000000000000000000004 /* WalkingMode.swift in Sources */,
-				A10000000000000000000005 /* ARCameraPreview.swift in Sources */,
-				A10000000000000000000006 /* AlertEngine.swift in Sources */,
-				A10000000000000000000007 /* LiDARSession.swift in Sources */,
-				A10000000000000000000008 /* DetectionModels.swift in Sources */,
-				A10000000000000000000009 /* DepthAnalyzer.swift in Sources */,
-				A1000000000000000000000A /* SyntheticDepth.swift in Sources */,
-				A1000000000000000000000B /* DepthProcessing.swift in Sources */,
-				A1000000000000000000000C /* CameraCapture.swift in Sources */,
-				A1000000000000000000000D /* AlertDebouncer.swift in Sources */,
+				A10000000000000000000004 /* DepthProcessing.swift in Sources */,
+				A10000000000000000000006 /* Models/RiskAssessment.swift in Sources */,
+				A10000000000000000000007 /* Services/WalkSession.swift in Sources */,
+				A10000000000000000000008 /* Services/AlertService.swift in Sources */,
+				A10000000000000000000009 /* DebugPanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,8 +223,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A20000000000000000000001 /* DepthProcessingTests.swift in Sources */,
-				A20000000000000000000002 /* DepthAnalyzerTests.swift in Sources */,
-				A20000000000000000000003 /* AlertDebouncerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,20 +243,20 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = FJA4V5H6XG;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "SafeStep uses the camera and LiDAR scanner to detect obstacles and warn you before you walk into them.";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SafeStep/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStep;
+				PRODUCT_BUNDLE_IDENTIFIER = cssa.safestep111;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -319,25 +271,65 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "SafeStep uses the camera and LiDAR scanner to detect obstacles and warn you before you walk into them.";
+				DEVELOPMENT_TEAM = FJA4V5H6XG;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SafeStep/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStep;
+				PRODUCT_BUNDLE_IDENTIFIER = cssa.safestep111;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		G20000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStepTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeStep.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SafeStep";
+			};
+			name = Debug;
+		};
+		G20000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStepTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeStep.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SafeStep";
 			};
 			name = Release;
 		};
@@ -440,46 +432,6 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		G20000000000000000000001 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStepTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeStep.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SafeStep";
-			};
-			name = Debug;
-		};
-		G20000000000000000000002 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.SafeStepTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeStep.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SafeStep";
 			};
 			name = Release;
 		};
