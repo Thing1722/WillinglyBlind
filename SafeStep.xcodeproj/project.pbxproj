@@ -10,6 +10,7 @@
 		A10000000000000000000001 /* SafeStepApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* SafeStepApp.swift */; };
 		A10000000000000000000002 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* StartView.swift */; };
 		A10000000000000000000003 /* LiveDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* LiveDetectionView.swift */; };
+		A10000000000000000000004 /* WalkingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* WalkingMode.swift */; };
 		A10000000000000000000005 /* DetectionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* DetectionModels.swift */; };
 		A10000000000000000000006 /* DebugPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* DebugPanelView.swift */; };
 /* End PBXBuildFile section */
@@ -21,6 +22,7 @@
 		B10000000000000000000004 /* SafeStep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeStep.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000000000000000000005 /* DetectionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionModels.swift; sourceTree = "<group>"; };
 		B10000000000000000000006 /* DebugPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPanelView.swift; sourceTree = "<group>"; };
+		B10000000000000000000007 /* WalkingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkingMode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +47,7 @@
 		C10000000000000000000002 /* SafeStep */ = {
 			isa = PBXGroup;
 			children = (
+				C10000000000000000000004 /* Detection */,
 				B10000000000000000000001 /* SafeStepApp.swift */,
 				B10000000000000000000002 /* StartView.swift */,
 				B10000000000000000000005 /* DetectionModels.swift */,
@@ -52,6 +55,14 @@
 				B10000000000000000000006 /* DebugPanelView.swift */,
 			);
 			path = SafeStep;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000004 /* Detection */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000007 /* WalkingMode.swift */,
+			);
+			path = Detection;
 			sourceTree = "<group>";
 		};
 		C10000000000000000000003 /* Products */ = {
@@ -134,6 +145,7 @@
 				A10000000000000000000002 /* StartView.swift in Sources */,
 				A10000000000000000000005 /* DetectionModels.swift in Sources */,
 				A10000000000000000000003 /* LiveDetectionView.swift in Sources */,
+				A10000000000000000000004 /* WalkingMode.swift in Sources */,
 				A10000000000000000000006 /* DebugPanelView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
